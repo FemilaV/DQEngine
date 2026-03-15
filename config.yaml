@@ -1,0 +1,95 @@
+# ─────────────────────────────────────────────────────────────────
+# DQ Engine — Main Configuration
+# Copy this to config.yaml and adjust as needed
+# ─────────────────────────────────────────────────────────────────
+
+app:
+  name: "Data Quality Engine"
+  version: "1.0.0"
+  debug: false
+
+# ── API Server ────────────────────────────────────────────────────
+api:
+  host: "0.0.0.0"
+  port: 8000
+  reload: false
+
+# ── Streamlit Frontend ────────────────────────────────────────────
+frontend:
+  port: 8501
+  title: "DQ Engine"
+
+# ── LLM Configuration ─────────────────────────────────────────────
+llm:
+  # Priority: openai → groq → mock
+  preferred_provider: "openai"     # openai | groq | mock
+  openai_model: "gpt-4o-mini"
+  groq_model: "llama-3.1-8b-instant"
+  max_tokens: 800
+  temperature: 0                   # 0 = deterministic SQL
+
+# ── Data Sources ──────────────────────────────────────────────────
+# Define your data sources here
+# These appear as presets in the UI
+data_sources:
+  - name: "Retail DB"
+    source_type: "sqlite"
+    db_path: "./sample_data/retail.db"
+
+  - name: "Customer Data"
+    source_type: "csv"
+    file_path: "./sample_data/customers.csv"
+
+  - name: "Transaction Data"
+    source_type: "csv"
+    file_path: "./sample_data/transactions.csv"
+
+  # Uncomment to add PostgreSQL:
+  # - name: "Production DB"
+  #   source_type: "postgres"
+  #   host: "localhost"
+  #   port: 5432
+  #   database: "mydb"
+  #   username: "admin"
+  #   password: "${PG_PASS}"      # loaded from .env
+
+# ── Profiling Agent ───────────────────────────────────────────────
+profiling:
+  # DQ dimension weights (must sum to 100)
+  dimension_weights:
+    completeness:  30
+    uniqueness:    20
+    validity:      15
+    accuracy:      10
+    timeliness:    10
+    consistency:   10
+    schema:         3
+    empty_strings:  2
+
+  # Thresholds for severity classification
+  thresholds:
+    critical_pct: 30   # >30% bad data = CRITICAL
+    warning_pct:   5   # 5-30% bad data = WARNING
+    info_pct:      1   # 1-5%  bad data = INFO
+
+  # Timeliness: how old is "stale"?
+  stale_days: 365
+
+  # Outlier detection: how many std deviations = outlier?
+  outlier_std: 4
+
+# ── NL→SQL Agent ─────────────────────────────────────────────────
+nl_sql:
+  max_rows: 100          # Default result limit
+  max_retries: 1         # Retry once if SQL fails
+  read_only: true        # Never allow INSERT/UPDATE/DELETE
+
+# ── Report Agent ─────────────────────────────────────────────────
+reports:
+  output_dir: "./reports"
+  auto_open: false       # Auto-open in browser after generation
+
+# ── Logging ──────────────────────────────────────────────────────
+logging:
+  level: "INFO"          # DEBUG | INFO | WARNING | ERROR
+  log_dir: "./logs"

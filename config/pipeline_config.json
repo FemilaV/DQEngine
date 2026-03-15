@@ -1,0 +1,92 @@
+{
+    "pipeline": {
+        "name": "DQ Engine Master Pipeline",
+        "framework": "LangGraph",
+        "description": "Multi-agent pipeline: validate → profile → nl_sql → report → summarise",
+        "nodes": [
+            {
+                "name": "validate_input",
+                "description": "Validates source config and table name before running agents",
+                "on_error": "handle_error"
+            },
+            {
+                "name": "run_profiling",
+                "description": "Runs 8 DQ checks via Profiling Agent",
+                "agent": "ProfilingAgent",
+                "on_error": "handle_error"
+            },
+            {
+                "name": "run_nl_sql",
+                "description": "Converts natural language to SQL via NL→SQL Agent (skipped if no question)",
+                "agent": "NLSQLAgent",
+                "optional": true,
+                "on_error": "continue"
+            },
+            {
+                "name": "generate_report",
+                "description": "Generates HTML report via Report Agent",
+                "agent": "ReportAgent",
+                "optional": true,
+                "on_error": "continue"
+            },
+            {
+                "name": "summarise",
+                "description": "Packages all results into PipelineResult",
+                "on_error": "handle_error"
+            }
+        ],
+        "agents": {
+            "ProfilingAgent": {
+                "checks": [
+                    "completeness",
+                    "empty_strings",
+                    "uniqueness",
+                    "validity",
+                    "timeliness",
+                    "consistency",
+                    "schema",
+                    "accuracy"
+                ],
+                "scoring": "weighted_average",
+                "dimension_weights": {
+                    "completeness": 30,
+                    "uniqueness": 20,
+                    "validity": 15,
+                    "accuracy": 10,
+                    "timeliness": 10,
+                    "consistency": 10,
+                    "schema": 3,
+                    "empty_strings": 2
+                }
+            },
+            "NLSQLAgent": {
+                "llm_fallback_chain": [
+                    "openai",
+                    "groq",
+                    "mock"
+                ],
+                "openai_model": "gpt-4o-mini",
+                "groq_model": "llama-3.1-8b-instant",
+                "read_only": true,
+                "max_retries": 1,
+                "forbidden_operations": [
+                    "DROP",
+                    "DELETE",
+                    "UPDATE",
+                    "INSERT",
+                    "ALTER",
+                    "TRUNCATE"
+                ]
+            },
+            "ReportAgent": {
+                "template": "templates/report_template.html",
+                "charts": [
+                    "radar",
+                    "null_bar"
+                ],
+                "output_format": "html",
+                "output_dir": "./reports"
+            }
+        }
+    }
+}

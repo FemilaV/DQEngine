@@ -1,0 +1,41 @@
+version: "3.9"
+
+# ─────────────────────────────────────────────────────────────────
+# DQ Engine — Docker Compose
+#
+# Usage:
+#   docker-compose up --build       # first time
+#   docker-compose up               # subsequent runs
+#   docker-compose down             # stop everything
+#
+# Access:
+#   Streamlit UI  → http://localhost:8501
+#   FastAPI docs  → http://localhost:8000/docs
+# ─────────────────────────────────────────────────────────────────
+
+services:
+  dqengine:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dq_engine
+    ports:
+      - "8000:8000"    # FastAPI
+      - "8501:8501"    # Streamlit
+    volumes:
+      # Persist reports and uploaded data outside the container
+      - ./reports:/app/reports
+      - ./sample_data:/app/sample_data
+      - ./logs:/app/logs
+    env_file:
+      - .env           # Loads OPENAI_API_KEY, GROQ_API_KEY etc.
+    environment:
+      - PYTHONPATH=/app
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s

@@ -1,0 +1,43 @@
+{
+    "sources": [
+        {
+            "name": "Retail SQLite DB",
+            "source_type": "sqlite",
+            "db_path": "./sample_data/retail.db",
+            "description": "Local SQLite database with orders, products, employees tables",
+            "tables": [
+                "orders",
+                "products",
+                "employees"
+            ]
+        },
+        {
+            "name": "Customer CSV",
+            "source_type": "csv",
+            "file_path": "./sample_data/customers.csv",
+            "description": "Customer data with intentional DQ issues for demo",
+            "tables": [
+                "customers"
+            ]
+        },
+        {
+            "name": "Transaction CSV",
+            "source_type": "csv",
+            "file_path": "./sample_data/transactions.csv",
+            "description": "Transaction data with outliers and negative amounts",
+            "tables": [
+                "transactions"
+            ]
+        },
+        {
+            "name": "PostgreSQL Production",
+            "source_type": "postgres",
+            "host": "localhost",
+            "port": 5432,
+            "database": "production",
+            "username": "admin",
+            "password": "${PG_PASS}",
+            "description": "Production PostgreSQL database (set PG_PASS in .env)"
+        }
+    ]
+}

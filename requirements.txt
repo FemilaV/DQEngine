@@ -1,0 +1,38 @@
+# ── Core ─────────────────────────────────────────────
+python-dotenv==1.2.2
+pydantic==2.12.5
+
+# ── Data Processing ───────────────────────────────────
+pandas==2.3.3
+numpy==2.4.2
+
+# ── Database Connectors ───────────────────────────────
+sqlalchemy==2.0.48
+psycopg2-binary==2.9.11         # PostgreSQL
+
+# ── LLM / Orchestration ───────────────────────────────
+langchain==1.2.10
+langchain-openai==1.1.10
+langchain-community==0.4.1
+langgraph==1.0.10
+openai==2.26.0
+groq==1.1.1
+
+# ── Backend API ───────────────────────────────────────
+fastapi==0.135.1
+uvicorn[standard]==0.41.0
+httpx==0.28.1
+
+# ── Frontend ──────────────────────────────────────────
+streamlit==1.55.0
+
+# ── Reporting & Visualization ─────────────────────────
+plotly==6.6.0
+jinja2==3.1.6
+kaleido==1.2.0                  # Plotly image export
+
+# ── Testing ───────────────────────────────────────────
+pytest==9.0.2
+
+# ── Process supervisor (inside Docker) ───────────────────────────
+supervisor==4.3.0
