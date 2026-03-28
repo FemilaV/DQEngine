@@ -63,7 +63,7 @@ The **Data Quality Engine** is a multi-agent system that automatically:
 
 ```bash
 # 1. Clone the repo
-git clone https://github.com/yourusername/DQEngine.git
+git clone https://github.com/FemilaV/DQEngine.git
 cd DQEngine
 
 # 2. Add your API key (optional — works without it using mock provider)
@@ -346,4 +346,4 @@ docker compose up --build
 ## 👤 Author
 
 **Femila** — Data Quality Engine  
-Built with ❤️ using LangGraph, FastAPI, and Streamlit
+Built using LangGraph, FastAPI, and Streamlit
